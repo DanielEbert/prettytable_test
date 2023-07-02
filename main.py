@@ -7,71 +7,65 @@ from collections import Counter
 import dataclasses
 import json
 
-old_results = {
-    'CCP': {
-        'RbpCcpOcp': {
-            'Assertion Failure': 3,
-            'Divide by Zero': 4,
+results = {
+    'findings': {
+        'CCP': {
+            'RbpCcpOcp': 
+                [
+                {
+                    'epoch_timestamp': 1688227256,
+                    'timestamp': '01.07.2023 18:01:33',   # use same name as folder here
+                    'branch': 'develop',
+                    'commit': 'b5d7664',
+                    'commit_timestamp': '24.06.2023 12:05:17',
+                    'bug_type': 'Divide by Zero',
+                    'artifactory_folder': '2023_07_01_19_39_22/findings/crashes/0'
+                },
+            ],
+            'RbpCcpOoc': [
+                {
+                    'epoch_timestamp': 1688227256,
+                    'timestamp': '01.07.2023 18:01:33',
+                    'branch': 'develop',
+                    'commit': 'b5d7664',
+                    'commit_timestamp': '24.06.2023 12:05:17',
+                    'bug_type': 'Divide by Zero',
+                    'artifactory_folder': '2023_07_01_19_39_22/findings/crashes/0'
+                },
+            ]
         },
-        'RbpCcpOoc': {
-            'Stack Buffer Overflow': 3,
-        }
-    }
-}
-
-new_results = {
-    'CCP': {
-        'RbpCcpOcp': {
-            'Integer Overflow': 1,
-            'Divide by Zero': 5,
+        'PSD': {
+            'XYZ': [
+                {
+                    'epoch_timestamp': 1688227256,
+                    'timestamp': '01.07.2023 18:01:33',
+                    'branch': 'develop',
+                    'commit': 'b5d7664',
+                    'commit_timestamp': '24.06.2023 12:05:17',
+                    'bug_type': 'Divide by Zero',
+                    'artifactory_folder': '2023_07_01_19_39_22/findings/crashes/0'
+                }
+            ]
         }
     },
-    'PSD': {
-        'XCZ': {
-            'asd Overflow': 1,
-            'Divide by Zero': 5,
+    'fuzzer_stats': {
+        'CCP': {
+            'RbpCcpOcp': [
+                {
+                    'epoch_timestamp': 1688227256,
+                    'timestamp': '01.07.2023 18:01:33',
+                    'branch': 'develop',
+                    'commit': 'b5d7664',
+                    'commit_timestamp': '24.06.2023 12:05:17',
+                    'inputs_tested': '100000',
+                    'average_inputs_tested_per_second': 300,
+                    'new_crashes': 3,
+                    'known_crashes': 7,
+                    'timeouts': 30,
+                    'artifactory_folder': '2023_07_01_19_39_22'
+                }
+            ]
         }
-    }
-}
-
-
-findings = {
-    'CCP': {
-        'RbpCcpOcp': [
-            {
-                'epoch_timestamp': 1688227256,
-                'timestamp': '01.07.2023 18:01:33',   # use same name as folder here
-                'branch': 'develop',
-                'commit': 'b5d7664',
-                'commit_timestamp': '24.06.2023 12:05:17',
-                'bug_type': 'Divide by Zero',
-                'artifactory_folder': '2023_07_01_19_39_22/findings/crashes/0'
-            },
-        ],
-        'RbpCcpOoc': [
-            {
-                'epoch_timestamp': 1688227256,
-                'timestamp': '01.07.2023 18:01:33',   # use same name as folder here
-                'branch': 'develop',
-                'commit': 'b5d7664',
-                'commit_timestamp': '24.06.2023 12:05:17',
-                'bug_type': 'Divide by Zero',
-                'artifactory_folder': '2023_07_01_19_39_22/findings/crashes/0'
-            },
-        ]
-    },
-    'PSD': {
-        'XYZ': [
-            {
-                'epoch_timestamp': 1688227256,
-                'timestamp': '01.07.2023 18:01:33',   # use same name as folder here
-                'branch': 'develop',
-                'commit': 'b5d7664',
-                'commit_timestamp': '24.06.2023 12:05:17',
-                'bug_type': 'Divide by Zero',
-                'artifactory_folder': '2023_07_01_19_39_22/findings/crashes/0'
-            }
-        ]
     }
 }
 
@@ -98,8 +92,8 @@ def add_findings(findings, subsys, runnable, new_findings):
             findings[subsys][runnable] = []
         findings[subsys][runnable].insert(0, dataclasses.asdict(finding))
 
-add_findings(findings, 'CCP', 'RbpCcpOcp', [f1, f2, f3]) 
-print(json.dumps(findings, indent=2))
+add_findings(results['findings'], 'CCP', 'RbpCcpOcp', [f1, f2, f3]) 
+print(json.dumps(results['findings'], indent=2))
 
 def create_findings_table(findings: dict[str, dict[str, list[dict[str, str | int]]]]) -> str:
     t = prettytable.PrettyTable()
@@ -177,9 +171,10 @@ def postprocess_table(table: str) -> str:
 
     return '\n'.join(rows)
 
-findings_table = postprocess_table(create_findings_table(findings))
+findings_table = postprocess_table(create_findings_table(results['findings']))
 print(findings_table)
 
-count_table = postprocess_table(create_finding_count_table(findings))
+count_table = postprocess_table(create_finding_count_table(results['findings']))
 print(count_table)
 
+# TODO: stats table
